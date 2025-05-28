@@ -1,4 +1,4 @@
-# Airport Control Tower Digital Twin
+![DT2](https://github.com/user-attachments/assets/9ef4720f-e024-4e1a-8e72-8c9ef7781ac8)# Airport Control Tower Digital Twin
 
 This project implements a Digital Twin solution for simulating and monitoring flight conditions in an airport control tower. The system uses FIWARE components to create digital representations of flights, weather conditions, and runway statuses, providing real-time visualization and monitoring capabilities.
 
@@ -585,7 +585,9 @@ docker exec -it airport-simulator python modify_parameters.py --weather-conditio
 
 ### Flight Tracking Dashboard
 
-![Flight Tracking Dashboard](https://images.pexels.com/photos/236153/pexels-photo-236153.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1)
+![dt1](https://github.com/user-attachments/assets/846f3c46-de9f-4155-984a-8861489fa8fb)
+
+![DT2](https://github.com/user-attachments/assets/9b8c1dd6-690b-4c94-b651-1a3e5aa77577)
 
 The Flight Tracking Dashboard displays real-time information about all flights, including:
 - Current position on a map
@@ -596,7 +598,9 @@ The Flight Tracking Dashboard displays real-time information about all flights, 
 
 ### Weather Monitoring Dashboard
 
-![Weather Monitoring Dashboard](https://images.pexels.com/photos/1107717/pexels-photo-1107717.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1)
+![DT3](https://github.com/user-attachments/assets/40fcb1d3-83b8-481b-84b7-deba4a66b6ed)
+
+
 
 The Weather Monitoring Dashboard shows:
 - Current temperature, wind speed, and direction
@@ -607,8 +611,7 @@ The Weather Monitoring Dashboard shows:
 - Impact of weather on flight operations
 
 ### Runway Status Dashboard
-
-![Runway Status Dashboard](https://images.pexels.com/photos/358220/pexels-photo-358220.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1)
+![Uploading DT4.png…]()
 
 The Runway Status Dashboard displays:
 - Current status of all runways (active/inactive)
