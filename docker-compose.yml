@@ -1,0 +1,132 @@
+services:
+  mongodb:
+    image: mongo:4.4
+    container_name: fiware-mongodb
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+    command: --nojournal
+    restart: always
+    networks:
+      - fiware_network
+
+  orion:
+    image: quay.io/fiware/orion
+    container_name: fiware-orion
+    depends_on:
+      - mongodb
+    ports:
+      - "1026:1026"
+    command: -dbhost mongodb -logLevel DEBUG
+    restart: always
+    networks:
+      - fiware_network
+
+  iot-agent:
+    image: quay.io/fiware/iotagent-json
+    container_name: fiware-iot-agent
+    depends_on:
+      - mongodb
+      - orion
+    ports:
+      - "4041:4041"
+    environment:
+      IOTA_CB_HOST: orion
+      IOTA_CB_PORT: 1026
+      IOTA_NORTH_PORT: 4041
+      IOTA_REGISTRY_TYPE: mongodb
+      IOTA_MONGO_HOST: mongodb
+      IOTA_MONGO_PORT: 27017
+      IOTA_MONGO_DB: iotagent-json
+      IOTA_HTTP_PORT: 7896
+      IOTA_PROVIDER_URL: http://iot-agent:4041
+    restart: always
+    networks:
+      - fiware_network
+
+  quantumleap:
+    image: orchestracities/quantumleap:latest
+    container_name: fiware-quantumleap
+    depends_on:
+      - orion
+      - crate
+    ports:
+      - "8668:8668"
+    environment:
+      CRATE_HOST: crate
+      ORION_URL: http://orion:1026
+      LOGLEVEL: DEBUG
+    restart: always
+    networks:
+      - fiware_network
+
+  crate:
+    image: crate/crate:5.2.4
+    container_name: fiware-cratedb
+    ports:
+      - "4200:4200"
+      - "4300:4300"
+    command: >
+      crate
+      -Cauth.host_based.enabled=false
+      -Ccluster.name=democluster
+      -Chttp.cors.enabled=true
+      -Chttp.cors.allow-origin="*"
+    volumes:
+      - crate_data:/data
+    restart: always
+    networks:
+      - fiware_network
+
+  grafana:
+    image: grafana/grafana:8.5.2
+    container_name: fiware-grafana
+    depends_on:
+      - crate
+    ports:
+      - "3000:3000"
+    environment:
+      GF_INSTALL_PLUGINS: grafana-clock-panel,grafana-worldmap-panel,grafana-piechart-panel
+    volumes:
+      - ./grafana/provisioning:/etc/grafana/provisioning
+      - ./grafana/dashboards:/var/lib/grafana/dashboards
+    restart: always
+    networks:
+      - fiware_network
+
+  webapp:
+    build:
+      context: ./webapp
+      dockerfile: Dockerfile
+    container_name: airport-webapp
+    ports:
+      - "80:80"
+    depends_on:
+      - orion
+    restart: always
+    networks:
+      - fiware_network
+
+  simulator:
+    build:
+      context: ./simulator
+      dockerfile: Dockerfile
+    container_name: airport-simulator
+    depends_on:
+      - orion
+      - iot-agent
+    environment:
+      ORION_URL: http://orion:1026
+      IOT_AGENT_URL: http://iot-agent:4041
+    restart: always
+    networks:
+      - fiware_network
+
+volumes:
+  mongodb_data:
+  crate_data:
+
+networks:
+  fiware_network:
+    driver: bridge
